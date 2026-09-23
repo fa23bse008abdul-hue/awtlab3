@@ -1,0 +1,6 @@
+{
+  "name": "E-Commerce API Modernization",
+  "description": "Enterprise-grade RESTful API & GraphQL architecture addressing unstandardized URIs, idempotency for order safety, and over-fetching reduction for high-scale e-commerce.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
