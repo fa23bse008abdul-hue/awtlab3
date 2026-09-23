@@ -10,7 +10,7 @@ Modern e-commerce platforms such as Daraz and Bazaar Technologies need APIs that
 
 Legacy API architectures commonly introduce problems such as:
 
- . ❌ Non-standard RPC-style URLs
+ ###. ❌ Non-standard RPC-style URLs
 
 ❌ Unstructured server errors
 
