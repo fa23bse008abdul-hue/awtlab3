@@ -1,46 +1,68 @@
-#  🛒 E-Commerce Platform API Modernization
-
+# 🛒 E-Commerce Platform API Modernization
 ## High-Scale API Architecture for Modern E-Commerce Platforms
+A production-oriented E-Commerce API modernization project built with Node.js, Express.js, TypeScript, REST, and GraphQL.
 
-A production-oriented API modernization project built with Node.js, Express.js, TypeScript, and GraphQL, designed to address common challenges in high-scale e-commerce systems operating over unreliable mobile networks.
+This project modernizes a traditional e-commerce backend to address common problems faced by large-scale platforms operating over unreliable mobile networks.
 
-# 📌 Overview
+# 🎯 Problem Statement
+Modern e-commerce platforms need APIs that are:
 
-Modern e-commerce platforms such as Daraz and Bazaar Technologies need APIs that can handle millions of users while remaining reliable on unstable 2G/3G/4G networks.
+Scalable
 
-Legacy API architectures commonly introduce problems such as:
+Consistent
 
- ### . ❌ Non-standard RPC-style URLs
+Mobile-friendly
+
+Reliable during network failures
+
+Easy for frontend/mobile developers to consume
+
+Safe against duplicate requests
+
+Legacy API architectures commonly suffer from:
+
+❌ Non-standard RPC-style URLs such as /getProductsList
+
+❌ Incorrect HTTP method usage
 
 ❌ Unstructured server errors
 
-❌ Duplicate orders and payment deductions
+❌ Duplicate orders caused by network retries
 
-❌ Excessive API response payloads
+❌ Excessive REST response payloads
 
 ❌ Poor mobile performance
 
 ❌ Difficult-to-maintain API contracts
 
-This project demonstrates a modern API architecture that addresses these problems using:
+This project provides a modern API architecture that solves these problems.
 
-✅ RESTful resource modeling
+✅ REQUIREMENTS COMPLETION STATUS
+Requirement	Status	Implementation
+Noun-based REST URIs	✅ COMPLETED	/api/v1/products
+GET endpoint	✅ COMPLETED	GET /api/v1/products
+POST endpoint	✅ COMPLETED	POST /api/v1/products
+PUT endpoint	✅ COMPLETED	PUT /api/v1/products/:id
+DELETE endpoint	✅ COMPLETED	DELETE /api/v1/products/:id
+PUT idempotency	✅ COMPLETED	Repeated PUT requests maintain the same resource state
+Filtering	✅ COMPLETED	?category=Electronics
+Searching	✅ COMPLETED	?search=phone
+Sorting	✅ COMPLETED	?sort=price_asc
+Pagination	✅ COMPLETED	?page=1&limit=5
+400 Bad Request	✅ COMPLETED	Validation errors
+404 Not Found	✅ COMPLETED	Missing product/resource
+201 Created	✅ COMPLETED	Successful product creation
+Standard JSON errors	✅ COMPLETED	Structured error envelope
+GraphQL	✅ COMPLETED	/graphql
+REST sparse fieldsets	✅ COMPLETED	?fields=title,price,thumbnailUrl
+Order idempotency	✅ COMPLETED	Idempotency-Key
+Duplicate order prevention	✅ COMPLETED	Previous result replay
+Interactive API portal	✅ COMPLETED	Local developer portal
+Local setup instructions	✅ COMPLETED	Installation and run instructions
+Postman collection	⚠️ ADD LINK	Add shared Postman URL before submission
+Public GitHub repository	⚠️ VERIFY	Confirm repository visibility before submission
 
-✅ Standard HTTP methods and status codes
-
-✅ Centralized JSON error handling
-
-✅ GraphQL field selection
-
-✅ REST sparse fieldsets
-
-✅ Idempotency keys for order creation
-
-✅ Filtering, searching, sorting, and pagination
-
-✅ Interactive API developer portal
-
-# 🏗️ Architecture
+🏗️ Architecture
                          ┌──────────────────────┐
                          │   Web / Mobile App   │
                          └──────────┬───────────┘
@@ -58,7 +80,7 @@ This project demonstrates a modern API architecture that addresses these problem
                                     │
               ┌─────────────────────┼─────────────────────┐
               │                     │                     │
-       Product Service        Order Service        Error Handler
+       Product Routes         Order Routes          Error Handler
               │                     │                     │
               │              Idempotency Layer             │
               │                     │                     │
@@ -68,33 +90,61 @@ This project demonstrates a modern API architecture that addresses these problem
                          │   Data / Storage    │
                          └─────────────────────┘
 
-🚀 Key Features
-1. RESTful API Architecture
+📋 MODULE 1 — RESTful Architecture & Resource Modeling
+✅ COMPLETED
+The API follows resource-oriented REST principles using noun-based URIs.
 
-The API follows resource-oriented REST principles instead of action-based RPC URLs.
-
-❌ Legacy
+❌ Legacy RPC-style URLs
 /getProductsList
 /deleteProductItem
 /updateProduct
 
-✅ Modern
+✅ Modern RESTful URLs
 GET    /api/v1/products
 GET    /api/v1/products/:id
 POST   /api/v1/products
 PUT    /api/v1/products/:id
 DELETE /api/v1/products/:id
 
+The API uses the correct HTTP method for each operation.
 
-This provides a consistent and predictable API contract.
+HTTP Methods
+Method	Endpoint	Purpose
+GET	/api/v1/products	Get all products
+GET	/api/v1/products/:id	Get a specific product
+POST	/api/v1/products	Create a product
+PUT	/api/v1/products/:id	Update a product
+DELETE	/api/v1/products/:id	Delete a product
 
-2. Product Filtering, Search & Pagination
-Filtering
+✅ PUT Idempotency
+The product update endpoint follows idempotent PUT semantics.
+
+PUT /api/v1/products/prod-101
+Content-Type: application/json
+
+{
+  "title": "Samsung Galaxy S25",
+  "price": 379999,
+  "category": "Electronics"
+}
+
+Sending the same PUT request multiple times results in the same resource state rather than creating duplicate resources.
+
+🔎 Product Filtering
+✅ COMPLETED
+Products can be filtered using query parameters.
+
+GET /api/v1/products?category=Electronics
+
+Multiple filters can be combined:
+
 GET /api/v1/products?category=Electronics&brand=Samsung
 
-Pagination
-GET /api/v1/products?page=1&limit=5
+📄 Product Pagination
+✅ COMPLETED
+Large product catalogs can be paginated.
 
+GET /api/v1/products?page=1&limit=5
 
 Example pagination metadata:
 
@@ -106,23 +156,30 @@ Example pagination metadata:
   "hasNextPage": true
 }
 
-Sorting
+Pagination prevents the entire product catalog from being returned in a single response.
+
+🔍 Product Search
+✅ COMPLETED
+Products can be searched using the search query parameter.
+
+GET /api/v1/products?search=phone
+
+↕️ Product Sorting
+✅ COMPLETED
+Products can be sorted using query parameters.
+
 GET /api/v1/products?sort=price_asc
 
 GET /api/v1/products?sort=price_desc
 
 GET /api/v1/products?sort=rating_desc
 
-Search
-GET /api/v1/products?search=phone
+🛡️ MODULE 2 — Consistent Error Schema & Status Codes
+✅ COMPLETED
+The API uses a standardized JSON error structure instead of returning raw HTML or unstructured errors.
 
-🛡️ 3. Standardized Error Handling
+Example:
 
-All API errors follow a consistent JSON structure.
-
-Instead of returning raw HTML or stack traces, the server returns machine-readable errors.
-
-Example
 {
   "success": false,
   "error": {
@@ -145,35 +202,79 @@ Example
   }
 }
 
-Supported Status Codes
-Status	Usage
+HTTP Status Codes
+✅ COMPLETED
+Status Code	Usage
 200 OK	Successful retrieval/update
 201 Created	Resource successfully created
-400 Bad Request	Validation/client error
+400 Bad Request	Invalid client data/validation error
 404 Not Found	Resource does not exist
 500 Internal Server Error	Unexpected server error
-📦 4. Solving REST Over-Fetching
 
-Traditional REST APIs often return much more information than a client actually needs.
+❌ 400 Bad Request — Validation Error
+✅ COMPLETED
+Invalid client data returns 400 Bad Request.
 
-For example, a mobile product card may only require:
+Example:
+
+POST /api/v1/products
+Content-Type: application/json
 
 {
-  "title": "Samsung Galaxy S25",
-  "price": 379999,
-  "thumbnailUrl": "/images/s25.jpg"
+  "title": "AB",
+  "price": -50,
+  "category": ""
 }
 
+Expected:
 
-Instead of returning dozens of unnecessary fields such as warehouse data, vendor costs, SKU mappings, shipping policies, and audit information.
+HTTP/1.1 400 Bad Request
 
-This project provides two solutions.
+The API returns a structured JSON validation error.
+
+❌ 404 Not Found
+✅ COMPLETED
+If a product does not exist, the API returns:
+
+HTTP/1.1 404 Not Found
+
+Example standardized response:
+
+{
+  "success": false,
+  "error": {
+    "error_code": "NOT_FOUND",
+    "message": "Product not found",
+    "timestamp": "2026-09-22T10:15:00.000Z"
+  }
+}
+
+✅ 201 Created
+✅ COMPLETED
+When a new product is successfully created:
+
+HTTP/1.1 201 Created
+
+This clearly indicates successful resource creation.
+
+📦 MODULE 3 — Over-Fetching Solution
+✅ COMPLETED
+The REST over-fetching problem is addressed using two approaches:
+
+GraphQL field selection
+
+REST sparse fieldsets
+
+These approaches allow clients to request only the data they actually need.
 
 🔹 Solution A — GraphQL
+✅ COMPLETED
+The project provides a GraphQL endpoint:
 
-Clients can request exactly the fields they need.
+POST /graphql
 
-Query
+Example query:
+
 query GetBannerProducts {
   products(limit: 5) {
     id
@@ -183,7 +284,8 @@ query GetBannerProducts {
   }
 }
 
-Response
+Example response:
+
 {
   "data": {
     "products": [
@@ -197,14 +299,15 @@ Response
   }
 }
 
-🔹 Solution B — REST Sparse Fieldsets
+The client controls which fields are returned.
 
-REST clients can use the fields parameter.
+🔹 Solution B — REST Sparse Fieldsets
+✅ COMPLETED
+REST clients can request specific fields using the fields parameter.
 
 GET /api/v1/products/prod-101?fields=title,price,thumbnailUrl
 
-
-Response:
+Example response:
 
 {
   "title": "Samsung Galaxy S25",
@@ -212,37 +315,34 @@ Response:
   "thumbnailUrl": "/images/s25.jpg"
 }
 
+This reduces unnecessary response data while allowing existing REST clients to continue using REST.
 
-This allows existing REST clients to reduce bandwidth without migrating to GraphQL.
-
-🔐 5. Idempotency & Order Deduplication
-
-One of the most important problems in mobile e-commerce is duplicate requests caused by unstable network connections.
+🔐 Idempotency & Duplicate Order Prevention
+✅ COMPLETED
+Unreliable mobile networks can cause clients to retry requests.
 
 Problem
 User clicks Pay
-       ↓
+      ↓
 Order created
-       ↓
+      ↓
 Payment processed
-       ↓
+      ↓
 Network connection drops
-       ↓
+      ↓
 Mobile app retries request
-       ↓
-Duplicate order/payment ❌
+      ↓
+Duplicate order ❌
 
 Solution
-
-Clients send a unique Idempotency-Key.
+Clients provide an Idempotency-Key.
 
 POST /api/v1/orders
 Idempotency-Key: ord-uuid-7491-bazaar
 
+The server stores the result associated with the idempotency key.
 
-The server stores the result associated with the key.
-
-If the same request is retried:
+If the same request is received again:
 
 Request #1
     ↓
@@ -261,13 +361,11 @@ Replay Original Response
     ↓
 No Duplicate Order
 
-
-The replay response contains:
+Replay responses contain:
 
 Idempotent-Replay: true
 
-
-This makes order creation safe against network retries.
+This protects order creation from duplicate processing caused by network retries.
 
 📡 API Examples
 Get Products
@@ -289,7 +387,6 @@ curl -X POST \
   "stock": 100
 }'
 
-
 Expected:
 
 201 Created
@@ -303,7 +400,6 @@ curl -X POST \
   "price": -50,
   "category": ""
 }'
-
 
 Expected:
 
@@ -329,8 +425,7 @@ curl -X POST \
   "paymentMethod": "JazzCash"
 }'
 
-
-Repeating the request with the same key returns the previously generated result instead of creating another order.
+Repeating the same request with the same idempotency key returns the previously generated result instead of creating another order.
 
 GraphQL
 curl -X POST \
@@ -340,43 +435,44 @@ curl -X POST \
   "query": "query { products(limit: 3) { id title price thumbnailUrl } }"
 }'
 
-📊 Performance Benchmark
-
-The project demonstrates the impact of reducing unnecessary API data.
+📊 Payload Optimization Benchmark
+The project demonstrates the effect of reducing unnecessary API response data.
 
 Metric	Legacy REST	Sparse REST	GraphQL
 Payload / item	~18,500 B	~340 B	~260 B
 10 items	~185 KB	~3.4 KB	~2.6 KB
 Bandwidth reduction	Baseline	~98.1%	~98.6%
 Mobile parsing	High	Low	Low
-Example
+
 Legacy REST
 18,500 B × 10
-       ↓
+      ↓
 ~185 KB
 
 Sparse REST
 340 B × 10
-       ↓
+      ↓
 ~3.4 KB
 
 GraphQL
 260 B × 10
-       ↓
+      ↓
 ~2.6 KB
 
-
-The reduction is especially useful for mobile users on limited or unstable cellular connections.
+The smaller responses reduce unnecessary cellular data transfer and client-side processing.
 
 🧪 Interactive Developer Portal
+✅ COMPLETED
+The project includes a browser-based developer portal.
 
-The project includes a built-in developer portal available at:
+After starting the application, open:
 
 http://localhost:3000
 
-REST API Explorer
+The portal provides interactive API testing functionality.
 
-Test:
+REST API Explorer
+The portal can be used to test:
 
 GET
 
@@ -394,9 +490,10 @@ Response headers
 
 JSON responses
 
-Error Simulation Matrix
+Error responses
 
-Test and compare:
+Error Simulation
+The portal can demonstrate:
 
 400 Bad Request
 
@@ -406,28 +503,30 @@ Standardized API errors
 
 Server failure scenarios
 
-Over-Fetching Benchmark Lab
-
+Over-Fetching Benchmark
 Compare:
 
 Legacy REST
-      ↓
+     ↓
 Sparse REST
-      ↓
+     ↓
 GraphQL
 
-
-and visualize payload-size savings.
-
 Idempotency Simulator
+Demonstrates:
 
-Simulate:
+Request
+   ↓
+Network Failure
+   ↓
+Retry
+   ↓
+Idempotency Check
+   ↓
+Original Result
 
-Request → Network Failure → Retry → Deduplication
-
-GraphQL Playground
-
-Execute GraphQL queries directly against the API.
+GraphQL Testing
+GraphQL queries can be executed directly against the API.
 
 🛠️ Technology Stack
 Technology	Purpose
@@ -435,40 +534,69 @@ Node.js	Backend runtime
 Express.js	REST API framework
 TypeScript	Type-safe development
 GraphQL	Flexible data querying
+React / TSX	Developer portal UI
+Vite	Frontend development/build tooling
 npm	Package management
-esbuild	Production bundling
 JSON	API data format
 HTTP/REST	Resource communication
-📁 Project Structure
+
+📁 Actual Project Structure
+The current project structure is:
+
 ecommerce-api-modernization/
 │
-├── src/
-│   ├── controllers/
-│   ├── routes/
-│   ├── services/
-│   ├── middleware/
-│   ├── graphql/
-│   ├── models/
-│   ├── types/
-│   └── app.ts
-│
-├── public/
-│   └── developer-portal/
-│
+├── .gitignore
+├── index.html
+├── metadata.json
 ├── package.json
+├── package-lock.json
+├── README.md
+├── server.ts
 ├── tsconfig.json
-└── README.md
+├── vite.config.ts
+│
+├── server/
+│   ├── data/
+│   ├── graphql/
+│   ├── middleware/
+│   ├── routes/
+│   ├── utils/
+│   └── types.ts
+│
+├── src/
+│   ├── App.tsx
+│   ├── components/
+│   ├── index.css
+│   ├── main.tsx
+│   └── types/
+│
+└── dist/
+
+Backend
+server/
+├── data/
+├── graphql/
+├── middleware/
+├── routes/
+├── utils/
+└── types.ts
+
+Developer Portal
+src/
+├── App.tsx
+├── components/
+├── index.css
+├── main.tsx
+└── types/
 
 ⚙️ Installation
 Prerequisites
-
 Node.js v18+
 
 npm v9+
 
 Clone Repository
 git clone https://github.com/your-org/ecommerce-api-modernization.git
-
 cd ecommerce-api-modernization
 
 Install Dependencies
@@ -478,7 +606,6 @@ npm install
 Development
 npm run dev
 
-
 Open:
 
 http://localhost:3000
@@ -486,63 +613,191 @@ http://localhost:3000
 Production Build
 npm run build
 
-
 Then:
 
 npm start
-
 
 The production server runs on:
 
 http://0.0.0.0:3000
 
-🎯 Project Objectives
+🧪 API Testing Checklist
+REST Endpoints
+✅ GET all products
 
-This project demonstrates the following modern backend concepts:
+✅ GET product by ID
 
- RESTful API design
+✅ POST product
 
- Resource-based URLs
+✅ PUT product
 
- Correct HTTP methods
+✅ DELETE product
 
- HTTP status codes
+Query Features
+✅ Filtering
 
- Centralized error handling
+✅ Searching
 
- JSON error envelopes
+✅ Sorting
 
- Filtering
+✅ Pagination
 
- Searching
+✅ Sparse field selection
 
- Sorting
+Error Handling
+✅ 400 Bad Request
 
- Pagination
+✅ 404 Not Found
 
- GraphQL
+✅ 500 Internal Server Error handling
 
- Sparse fieldsets
+✅ Standardized JSON error schema
 
- Idempotency keys
+✅ Validation details
 
- Duplicate order prevention
+Advanced Features
+✅ GraphQL
 
- Mobile bandwidth optimization
+✅ Idempotency keys
 
- Interactive API testing
+✅ Duplicate order prevention
+
+✅ Interactive API testing
+
+✅ Payload optimization
+
+📋 SUBMISSION CHECKLIST
+Submission Requirement	Status
+GitHub repository is public	⚠️ VERIFY BEFORE SUBMISSION
+README.md with local setup instructions	✅ COMPLETED
+GET endpoint implemented	✅ COMPLETED
+POST endpoint implemented	✅ COMPLETED
+PUT endpoint implemented	✅ COMPLETED
+DELETE endpoint implemented	✅ COMPLETED
+REST endpoints tested locally	✅ COMPLETED
+Error handling tested locally	✅ COMPLETED
+GraphQL implemented	✅ COMPLETED
+Field selector implemented	✅ COMPLETED
+Filtering implemented	✅ COMPLETED
+Pagination implemented	✅ COMPLETED
+Idempotency implemented	✅ COMPLETED
+Interactive API documentation/testing	✅ COMPLETED
+Shared Postman collection	⚠️ ADD LINK BEFORE SUBMISSION
+Ready for live lab viva	✅ YES
+
+🔗 API Documentation / Postman
+Interactive Developer Portal
+Run the project and open:
+
+http://localhost:3000
+
+The portal provides interactive REST and GraphQL API testing.
+
+Shared Postman Collection
+Add your public Postman collection link here before submission:
+
+POSTMAN_COLLECTION_URL_HERE
+
+🎓 Live Lab Viva Demonstration
+The following sequence can be used during the viva.
+
+1. Start the application
+npm run dev
+
+Open:
+
+http://localhost:3000
+
+2. Demonstrate REST Resource Modeling
+Show:
+
+GET    /api/v1/products
+GET    /api/v1/products/:id
+POST   /api/v1/products
+PUT    /api/v1/products/:id
+DELETE /api/v1/products/:id
+
+3. Demonstrate Filtering and Pagination
+GET /api/v1/products?category=Electronics&page=1&limit=5
+
+4. Demonstrate Validation
+Send invalid product data and show:
+
+400 Bad Request
+
+with the standardized JSON error response.
+
+5. Demonstrate Missing Resource
+Request an invalid product ID and show:
+
+404 Not Found
+
+6. Demonstrate Product Creation
+Create a valid product and show:
+
+201 Created
+
+7. Demonstrate Over-Fetching Solution
+Show:
+
+GET /api/v1/products/prod-101?fields=title,price,thumbnailUrl
+
+Then demonstrate the equivalent GraphQL query.
+
+8. Demonstrate Idempotency
+Send an order request with:
+
+Idempotency-Key: test-order-uuid-9901
+
+Repeat the same request and demonstrate that the existing result is replayed instead of creating a duplicate order.
+
+🎯 Project Objectives — COMPLETED
+The project demonstrates:
+
+✅ RESTful API design
+
+✅ Resource-based URLs
+
+✅ Correct HTTP methods
+
+✅ Idempotent PUT updates
+
+✅ HTTP status codes
+
+✅ Centralized error handling
+
+✅ Standardized JSON error envelopes
+
+✅ Filtering
+
+✅ Searching
+
+✅ Sorting
+
+✅ Pagination
+
+✅ GraphQL
+
+✅ REST sparse fieldsets
+
+✅ Idempotency keys
+
+✅ Duplicate order prevention
+
+✅ Mobile bandwidth optimization
+
+✅ Interactive API testing
 
 📈 Expected Benefits
-
 The modernized architecture provides:
 
 Better API consistency through resource-oriented endpoints.
 
-Improved client reliability through standardized errors.
+Improved error handling through standardized JSON responses.
 
 Lower bandwidth usage through GraphQL and sparse fieldsets.
 
-Safer payment/order retries through idempotency.
+Safer order retries through idempotency keys.
 
 Better mobile performance through smaller JSON payloads.
 
@@ -551,8 +806,7 @@ Improved maintainability through TypeScript and modular architecture.
 Better developer experience through the interactive API portal.
 
 🔮 Future Improvements
-
-The current project can be extended with:
+The current implementation can be extended with:
 
 PostgreSQL or MongoDB persistence
 
@@ -564,7 +818,7 @@ Role-based access control
 
 Redis caching
 
-Message queues such as Kafka or RabbitMQ
+Kafka or RabbitMQ message queues
 
 Distributed tracing
 
@@ -579,13 +833,25 @@ Automated unit and integration testing
 CI/CD pipelines
 
 📝 Conclusion
+This project demonstrates the modernization of a traditional e-commerce backend into a structured, reliable, and mobile-friendly API architecture.
 
-This project demonstrates the modernization of a traditional e-commerce backend into a structured, scalable, and mobile-friendly API architecture.
+The implementation directly addresses the three major API modernization requirements:
 
-The combination of REST, GraphQL, TypeScript, standardized error handling, sparse fieldsets, and idempotency addresses several important challenges faced by modern e-commerce applications.
+RESTful Resource Modeling
+          +
+Consistent Error Handling
+          +
+Correct HTTP Status Codes
+          +
+GraphQL / Sparse Fieldsets
+          +
+Filtering & Pagination
+          +
+Idempotency
+          ↓
+Modern E-Commerce API
 
-The architecture is designed with high-scale and unreliable mobile connectivity in mind, making it suitable as a practical demonstration of modern enterprise API design.
+The project provides a practical demonstration of modern enterprise API design for e-commerce applications operating under high traffic and unreliable mobile connectivity.
 
 📄 License
-
 This project is licensed under the MIT License.
