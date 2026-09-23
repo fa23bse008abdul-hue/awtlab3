@@ -1,10 +1,10 @@
-#🛒 E-Commerce Platform API Modernization
+#  🛒 E-Commerce Platform API Modernization
 
-High-Scale API Architecture for Modern E-Commerce Platforms
+## High-Scale API Architecture for Modern E-Commerce Platforms
 
 A production-oriented API modernization project built with Node.js, Express.js, TypeScript, and GraphQL, designed to address common challenges in high-scale e-commerce systems operating over unreliable mobile networks.
 
-📌 Overview
+# 📌 Overview
 
 Modern e-commerce platforms such as Daraz and Bazaar Technologies need APIs that can handle millions of users while remaining reliable on unstable 2G/3G/4G networks.
 
@@ -40,7 +40,7 @@ This project demonstrates a modern API architecture that addresses these problem
 
 ✅ Interactive API developer portal
 
-🏗️ Architecture
+# 🏗️ Architecture
                          ┌──────────────────────┐
                          │   Web / Mobile App   │
                          └──────────┬───────────┘
